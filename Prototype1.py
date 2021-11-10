@@ -10,29 +10,30 @@ import PSO
 simplefilter("ignore", category=ConvergenceWarning)
 
 # parametri
-dataset_name = "iris"
+dataset_name = "breast_cancer"
 test_size = 0.3
-phi1 = 1.4960
-phi2 = 1.4960
-neurons_in_hidden = 100
-pmin = -2.0
-pmax = 2.0
-smin = -0.5
-smax = 0.5
-num_inputs = 4
-num_outputs = 3
-size = (num_inputs+num_outputs)*neurons_in_hidden + num_outputs + neurons_in_hidden
-size_pop = 30
-generations = 100
-w = 0.7298
-# preparazione
-X_train, X_test, y_train, y_test = functions.load_dataset(dataset_name=dataset_name, test_size=test_size)
+phi1 = 2.1
+phi2 = 2.1
+wmax = 0.9
+wmin = 0.6
+pmin = -2
+pmax = 2
+smin = -1
+smax = 1
+size_pop = 50
+generations = 200
+# MLP_shape = (num_inputs, 50, 50, num_outputs)
 
+# preparazione
+X_train, X_test, y_train, y_test, num_inputs, num_outputs, neurons_in_hidden = functions.load_dataset(dataset_name=dataset_name, test_size=test_size)
+size = functions.get_size(num_inputs, num_outputs, neurons_in_hidden)
+
+# toolbox
 toolbox = base.Toolbox()
 toolbox.register("particle", PSO.generate, size=size, pmin=pmin, pmax=pmax, smin=smin, smax=smax)
 toolbox.register("population", tools.initRepeat, list, toolbox.particle)
-toolbox.register("update", PSO.updateParticle, phi1=phi1, phi2=phi2, w=w)
-toolbox.register("evaluate", functions.test_weights_sklearn, X=X_train, y=y_train, neurons_in_hidden=neurons_in_hidden, inputs=num_inputs, outputs=num_outputs)
+toolbox.register("update", PSO.updateParticle, phi1=phi1, phi2=phi2)
+toolbox.register("evaluate", functions.test_weights_sklearn, X=X_train, y=y_train, neurons_in_hidden=neurons_in_hidden, inputs=num_inputs, outputs=num_outputs, id=True)
 
 # main
 def main():
@@ -51,6 +52,7 @@ def main():
 
     for g in range(GEN):
         
+        wtemp = wmax - ((wmax - wmin)*g)/GEN
         for part in pop:
             part.fitness.values = toolbox.evaluate(part)                        # calcolo la fitness per ogni particella alla sua attuale posizione
             if not part.best or part.best.fitness < part.fitness:               # aggiorno il local best se la fitness è migliore dei quella del precedente 
@@ -60,7 +62,7 @@ def main():
                 best = creator.Particle(part)
                 best.fitness.values = part.fitness.values
         for part in pop:
-            toolbox.update(part, best)                                          # aggiorno tutte le particelle con le nuove posizioni
+            toolbox.update(part, best, w=wtemp)                                          # aggiorno tutte le particelle con le nuove posizioni
 
         # stampo le statistiche
         logbook.record(gen=g, evals=len(pop), **stats.compile(pop))
@@ -75,4 +77,4 @@ if __name__ == "__main__":
     print("Test finale:")
     fitness = functions.test_weights_sklearn(best, X=X_test, y=y_test, 
                 neurons_in_hidden=neurons_in_hidden, inputs=num_inputs, outputs=num_outputs)
-    print("fitness sul test set =", fitness)
+    print("accuracy sul test set =", fitness)
