@@ -6,23 +6,24 @@ from warnings import simplefilter
 from sklearn.exceptions import ConvergenceWarning
 import functions
 import PSO
+import json
 
 simplefilter("ignore", category=ConvergenceWarning)
 
 # parametri
 dataset_name = "breast_cancer"
-test_size = 0.3
+test_size = 0.34
 phi1 = 2.1
 phi2 = 2.1
 wmax = 0.9
 wmin = 0.6
 pmin = -2
 pmax = 2
-smin = -1
-smax = 1
+smin = -0.5
+smax = 0.5
 size_pop = 50
 generations = 200
-# MLP_shape = (num_inputs, 50, 50, num_outputs)
+num_tests = 11
 
 # preparazione
 X_train, X_test, y_train, y_test, num_inputs, num_outputs, neurons_in_hidden = functions.load_dataset(dataset_name=dataset_name, test_size=test_size)
@@ -66,15 +67,27 @@ def main():
 
         # stampo le statistiche
         logbook.record(gen=g, evals=len(pop), **stats.compile(pop))
-        print(logbook.stream)
+        #print(logbook.stream)
     
     return pop, logbook, best
 
 # avvio programma
 if __name__ == "__main__":
-    pop, logbook, best = main()
-    print("fitness = ", best.fitness.values)
-    print("Test finale:")
-    fitness = functions.test_weights_sklearn(best, X=X_test, y=y_test, 
-                neurons_in_hidden=neurons_in_hidden, inputs=num_inputs, outputs=num_outputs)
-    print("accuracy sul test set =", fitness)
+    
+    train_vector = []
+    test_vector = []
+    logbooks = []
+    w_and_b = []
+    for i in range(num_tests):
+        print("--------Test %d/%d--------" %(i+1,num_tests))
+        pop, logbook, best = main()
+        logbooks.append(logbook)
+        print("Fitness finale del migliore = ", best.fitness.values[0])
+        train_vector.append(best.fitness.values[0])
+        fitness = functions.test_weights_sklearn(best, X=X_test, y=y_test, 
+                    neurons_in_hidden=neurons_in_hidden, inputs=num_inputs, outputs=num_outputs)
+        print("Accuracy sul test set =", fitness[0])
+        test_vector.append(fitness[0])
+        w_and_b.append(best)    
+    functions.save_test(dataset_name, train_vector, test_vector, w_and_b, logbooks)
+    print("--------Fine dei test--------")
