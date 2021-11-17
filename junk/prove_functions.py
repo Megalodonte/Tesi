@@ -10,6 +10,7 @@ from sklearn.datasets import load_wine
 from sklearn.datasets import load_breast_cancer
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
+import pandas as pd
 
 def get_size_prova(MLP_shape):
     mat = numpy.array([])
@@ -75,3 +76,12 @@ def test_weights_keras_prova(RNA, X, y, neurons_in_hidden, inputs, outputs):
     model.set_weights(new_weights)
     fitness = model.evaluate(X, y, verbose=0)
     return fitness,
+
+def get_arrays_old(csv, target_column):
+    df = pd.read_csv(csv)
+    target_column = [target_column] 
+    predictors = list(set(list(df.columns))-set(target_column)) 
+    X = df[predictors].values
+    y = df[target_column].values
+    y.resize((y.shape[0],))
+    return X, y

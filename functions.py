@@ -3,6 +3,7 @@ import json
 import pandas as pd
 from sklearn.metrics import balanced_accuracy_score
 from sklearn.metrics import mean_squared_error
+from sklearn.metrics import accuracy_score
 from sklearn.neural_network import MLPClassifier
 from sklearn.datasets import load_iris
 from sklearn.datasets import load_digits
@@ -75,7 +76,7 @@ def load_dataset(dataset_name, test_size):
     return  X_train, X_test, y_train, y_test, inputs, outputs, neurons
 
 # per testare le particelle durante il training
-def test_weights_sklearn(RNA, X, y, inputs, outputs, neurons_in_hidden, id=bool):
+def test_weights_sklearn(RNA, X, y, inputs, outputs, neurons_in_hidden, id=True):
     
     MLP = MLPClassifier(hidden_layer_sizes=(neurons_in_hidden,), max_iter=1)
     MLP.fit(X, y)
@@ -91,7 +92,10 @@ def test_weights_sklearn(RNA, X, y, inputs, outputs, neurons_in_hidden, id=bool)
     MLP.coefs_ = [W1,W2]
     MLP.intercepts_ = [b1,b2]
     predicts = MLP.predict(X)   
-    fitness = balanced_accuracy_score(y, predicts)
+    if id:
+        fitness = balanced_accuracy_score(y, predicts)
+    else:
+        fitness = accuracy_score(y, predicts)
     return fitness,
 
 def get_size(inputs, outputs, neurons):
@@ -118,35 +122,24 @@ def get_arrays(csv, target_column, first_column=False, first_row=False):
     return X, y
 
 def save_test(name, train, test, wb, log):
-    trainfile = "data/%s/%s_train_vector.json" %(name, name)
+    trainfile = "data_balanced_accuracy/%s/%s_train_vector.json" %(name, name)
     with open(trainfile, "w") as f:
         json.dump(train, f)
-    testfile = "data/%s/%s_test_vector.json" %(name, name)
+    testfile = "data_balanced_accuracy/%s/%s_test_vector.json" %(name, name)
     with open(testfile, "w") as f:
         json.dump(test, f)
-    wbfile = "data/%s/%s_w&b.json" %(name, name)
+    wbfile = "data_balanced_accuracy/%s/%s_w&b.json" %(name, name)
     with open(wbfile, "w") as f:
         json.dump(wb, f)
-    logfile = "data/%s/%s_logbooks.json" %(name, name)
+    logfile = "data_balanced_accuracy/%s/%s_logbooks.json" %(name, name)
     with open(logfile, "w") as f:
         json.dump(log, f)
 
-def get_arrays_parkinson(csv):
-    df = pd.read_csv(csv)
-    df.drop("name", 1, inplace=True)
-    dfcopy = df.copy()
-    dfcopy.drop("status", 1, inplace=True)
-    X = dfcopy.values
-    target = ["status"]
-    y = df[target].values
-    y.resize((y.shape[0],))
-    return X, y
-
-def get_arrays_old(csv, target_column):
-    df = pd.read_csv(csv)
-    target_column = [target_column] 
-    predictors = list(set(list(df.columns))-set(target_column)) 
-    X = df[predictors].values
-    y = df[target_column].values
-    y.resize((y.shape[0],))
-    return X, y
+def save_test_BP(name, train, test):
+    trainfile = "data_BP/%s/%s_train_vector.json" %(name, name)
+    with open(trainfile, "w") as f:
+        json.dump(train, f)
+    testfile = "data_BP/%s/%s_test_vector.json" %(name, name)
+    with open(testfile, "w") as f:
+        json.dump(test, f)
+    
