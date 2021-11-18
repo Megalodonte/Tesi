@@ -21,21 +21,21 @@ def load_dataset(dataset_name, test_size):
             self.data = data
             self.target = target
 
-    if dataset_name == "iris": 
+    if dataset_name == "iris":
         dataset = load_iris()
         inputs = 4
         outputs = 3
-    
-    elif dataset_name == "digits": 
+
+    elif dataset_name == "digits":
         dataset = load_digits()
         inputs = 64
-        outputs = 10   
-    
+        outputs = 10
+
     elif dataset_name == "wine":
         dataset = load_wine()
         inputs = 13
-        outputs = 3 
-    
+        outputs = 3
+
     elif dataset_name == "breast_cancer_sklearn":
         dataset = load_breast_cancer()
         inputs = 30
@@ -58,15 +58,39 @@ def load_dataset(dataset_name, test_size):
         dataset = ds(data=d, target=t)
         inputs = 22
         outputs = 1
-    
+
     elif dataset_name == "breast_cancer":
         d, t = get_arrays("datasets/breast/breast-cancer-wisconsin.data", "Column10", first_column=True, first_row=True)
         dataset = ds(data=d, target=t)
         inputs = 9
         outputs = 1
-    
+
+    elif dataset_name == "vertebral":
+        d, t = get_arrays("datasets/vertebral/column_3C.dat", "Column6", first_row=True, sep=" ")
+        dataset = ds(data=d, target=t)
+        inputs = 6
+        outputs = 3
+
+    elif dataset_name == "seeds":
+        d, t = get_arrays("datasets/seeds/seeds_dataset.txt", "Column7", first_row=True, sep=" ")
+        dataset = ds(data=d, target=t)
+        inputs = 7
+        outputs = 3
+
+    elif dataset_name == "balance":
+        d, t = get_arrays("datasets/balance/balance-scale.data", "Column4", first_row=True)
+        dataset = ds(data=d, target=t)
+        inputs = 4
+        outputs = 3
+
+    elif dataset_name == "vehicle":
+        d, t = get_arrays("datasets/vehicle/vehicle.dat", "Column18", first_row=True, sep=" ")
+        dataset = ds(data=d, target=t)
+        inputs = 18
+        outputs = 4
+
     else: raise ValueError("il dataset non è supportato")
-    
+
     neurons = inputs*2 + 1
     X_train, X_test, y_train, y_test = train_test_split(dataset.data, dataset.target, test_size=test_size, random_state=69)
     scaler = StandardScaler()
@@ -77,7 +101,7 @@ def load_dataset(dataset_name, test_size):
 
 # per testare le particelle durante il training
 def test_weights_sklearn(RNA, X, y, inputs, outputs, neurons_in_hidden, id=True):
-    
+
     MLP = MLPClassifier(hidden_layer_sizes=(neurons_in_hidden,), max_iter=1)
     MLP.fit(X, y)
     RNA = numpy.array(RNA)
@@ -91,7 +115,7 @@ def test_weights_sklearn(RNA, X, y, inputs, outputs, neurons_in_hidden, id=True)
     b2 = RNA[step3:step4].reshape((outputs,))
     MLP.coefs_ = [W1,W2]
     MLP.intercepts_ = [b1,b2]
-    predicts = MLP.predict(X)   
+    predicts = MLP.predict(X)
     if id:
         fitness = balanced_accuracy_score(y, predicts)
     else:
@@ -102,17 +126,17 @@ def get_size(inputs, outputs, neurons):
     size = (inputs+outputs)*neurons + outputs + neurons
     return size
 
-def get_arrays(csv, target_column, first_column=False, first_row=False):
+def get_arrays(csv, target_column, first_column=False, first_row=False, sep=","):
     if first_row:
         if first_column:
-            df = pd.read_csv(csv, header=None, index_col=[0], prefix="Column")
+            df = pd.read_csv(csv, header=None, index_col=[0], prefix="Column", sep=sep)
         else:
-            df = pd.read_csv(csv, header=None, prefix="Column")
+            df = pd.read_csv(csv, header=None, prefix="Column", sep=sep)
     else:
         if first_column:
-            df = pd.read_csv(csv, index_col=[0])
+            df = pd.read_csv(csv, index_col=[0], sep=sep)
         else:
-            df = pd.read_csv(csv)
+            df = pd.read_csv(csv, sep=sep)
     dfcopy = df.copy()
     dfcopy.drop(target_column, 1, inplace=True)
     X = dfcopy.values
@@ -142,4 +166,3 @@ def save_test_BP(name, train, test):
     testfile = "data_BP/%s/%s_test_vector.json" %(name, name)
     with open(testfile, "w") as f:
         json.dump(test, f)
-    

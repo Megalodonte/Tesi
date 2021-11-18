@@ -10,7 +10,7 @@ import PSO
 simplefilter("ignore", category=ConvergenceWarning)
 
 # parametri
-dataset_name = "breast_cancer_sklearn"
+dataset_name = "vehicle"
 test_size = 0.3
 phi1 = 2.1
 phi2 = 2.1
@@ -51,14 +51,14 @@ def main():
     best = None
 
     for g in range(GEN):
-        
+
         wtemp = wmax - ((wmax - wmin)*g)/GEN
         for part in pop:
             part.fitness.values = toolbox.evaluate(part)                        # calcolo la fitness per ogni particella alla sua attuale posizione
-            if not part.best or part.best.fitness < part.fitness:               # aggiorno il local best se la fitness è migliore dei quella del precedente 
+            if not part.best or part.best.fitness < part.fitness:               # aggiorno il local best se la fitness è migliore dei quella del precedente
                 part.best = creator.Particle(part)
                 part.best.fitness.values = part.fitness.values
-            if not best or best.fitness < part.fitness:                         # aggiorno il global best se la fitness è migliore dei quella del precedente 
+            if not best or best.fitness < part.fitness:                         # aggiorno il global best se la fitness è migliore dei quella del precedente
                 best = creator.Particle(part)
                 best.fitness.values = part.fitness.values
         for part in pop:
@@ -67,12 +67,12 @@ def main():
         # stampo le statistiche
         logbook.record(gen=g, evals=len(pop), **stats.compile(pop))
         # print(logbook.stream)
-    
+
     return pop, logbook, best
 
 # avvio programma
 if __name__ == "__main__":
-    
+
     train_vector = []
     test_vector = []
     logbooks = []
@@ -83,10 +83,10 @@ if __name__ == "__main__":
         logbooks.append(logbook)
         print("Fitness finale del migliore = ", best.fitness.values[0])
         train_vector.append(best.fitness.values[0])
-        fitness = functions.test_weights_sklearn(best, X=X_test, y=y_test, 
+        fitness = functions.test_weights_sklearn(best, X=X_test, y=y_test,
                     neurons_in_hidden=neurons_in_hidden, inputs=num_inputs, outputs=num_outputs, id=False)
         print("Accuracy sul test set =", fitness[0])
         test_vector.append(fitness[0])
-        w_and_b.append(best)    
+        w_and_b.append(best)
     functions.save_test(dataset_name, train_vector, test_vector, w_and_b, logbooks)
     print("--------Fine dei test--------")

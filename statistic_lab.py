@@ -1,5 +1,5 @@
 import sklearn
-from sklearn.neural_network import MLPClassifier 
+from sklearn.neural_network import MLPClassifier
 from sklearn.metrics import accuracy_score
 import functions
 from warnings import simplefilter
@@ -8,7 +8,7 @@ import numpy as np
 
 simplefilter("ignore", category=ConvergenceWarning)
 
-dataset_name = "digits"
+dataset_name = "vehicle"
 test_size = 0.3
 X_train, X_test, y_train, y_test, num_inputs, num_outputs, neurons_in_hidden = functions.load_dataset(dataset_name=dataset_name, test_size=test_size)
 num_tests = 15
