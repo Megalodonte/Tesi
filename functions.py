@@ -89,6 +89,31 @@ def load_dataset(dataset_name, test_size):
         inputs = 18
         outputs = 4
 
+    elif dataset_name == "glass":
+        d, t = get_arrays("datasets/glass/glass.csv", "Type")
+        dataset = ds(data=d, target=t)
+        inputs = 9
+        outputs = 7
+
+    elif dataset_name == "ph":
+        d, t = get_arrays("datasets/ph/ph-data.csv", "label")
+        dataset = ds(data=d, target=t)
+        inputs = 3
+        outputs = 15
+
+    elif dataset_name == "alcohol":
+        d, t = get_arrays("datasets/alcohol/QCM3.csv", "class", sep=";")
+        dataset = ds(data=d, target=t)
+        inputs = 10
+        outputs = 5
+
+    elif dataset_name == "liver":
+        d, t = get_arrays("datasets/liver/liver.csv", "Column10", first_row=True)
+        dataset = ds(data=d, target=t)
+        inputs = 10
+        outputs = 1
+
+
     else: raise ValueError("il dataset non è supportato")
 
     neurons = inputs*2 + 1
