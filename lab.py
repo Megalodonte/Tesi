@@ -13,9 +13,9 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import balanced_accuracy_score
 from functions import load_dataset
 
-df = pd.read_csv("datasets/liver/liver.csv", header=None, prefix="Column")
+df = pd.read_csv("datasets/hayes/hayes.csv")
 print(df)
-print(df.isnull().sum())
+# print(df.isnull().sum())
 
 
 

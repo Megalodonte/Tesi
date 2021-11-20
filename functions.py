@@ -107,12 +107,35 @@ def load_dataset(dataset_name, test_size):
         inputs = 10
         outputs = 5
 
-    elif dataset_name == "liver":
-        d, t = get_arrays("datasets/liver/liver.csv", "Column10", first_row=True)
+    elif dataset_name == "teaching":
+        d, t = get_arrays("datasets/teaching/teaching.csv", "class", first_column=True)
         dataset = ds(data=d, target=t)
-        inputs = 10
-        outputs = 1
+        inputs = 5
+        outputs = 3
 
+    elif dataset_name == "car":
+        d, t = get_arrays("datasets/car/car.csv", "class")
+        dataset = ds(data=d, target=t)
+        inputs = 6
+        outputs = 4
+
+    elif dataset_name == "penguins":
+        d, t = get_arrays("datasets/penguins/penguins.csv", "species")
+        dataset = ds(data=d, target=t)
+        inputs = 6
+        outputs = 3
+
+    elif dataset_name == "hayes":
+        d, t = get_arrays("datasets/hayes/hayes.csv", "class")
+        dataset = ds(data=d, target=t)
+        inputs = 4
+        outputs = 3
+
+    elif dataset_name == "nursery":
+        d, t = get_arrays("datasets/nursery/nursery.csv", "Class")
+        dataset = ds(data=d, target=t)
+        inputs = 8
+        outputs = 4
 
     else: raise ValueError("il dataset non è supportato")
 

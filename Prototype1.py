@@ -10,7 +10,7 @@ import PSO
 simplefilter("ignore", category=ConvergenceWarning)
 
 # parametri
-dataset_name = "liver"
+dataset_name = "car"
 test_size = 0.3
 phi1 = 2.1
 phi2 = 2.1
@@ -66,7 +66,7 @@ def main():
 
         # stampo le statistiche
         logbook.record(gen=g, evals=len(pop), **stats.compile(pop))
-        print(logbook.stream)
+        #print(logbook.stream)
 
     return pop, logbook, best
 

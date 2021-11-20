@@ -2,8 +2,8 @@ from scipy.stats import mannwhitneyu
 import json
 import numpy as np
 
-data_bal = json.load(open("data_balanced_accuracy/alcohol/alcohol_test_vector.json", ))
-data_BP = json.load(open("data_BP/alcohol/alcohol_test_vector.json", ))
+data_bal = json.load(open("data_balanced_accuracy/liver/liver_test_vector.json", ))
+data_BP = json.load(open("data_BP/liver/liver_test_vector.json", ))
 
 #results = mannwhitneyu(data_bal, data_BP, alternative="greater")
 data_bal = np.array(data_bal)
