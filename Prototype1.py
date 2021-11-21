@@ -10,7 +10,7 @@ import PSO
 simplefilter("ignore", category=ConvergenceWarning)
 
 # parametri
-dataset_name = "car"
+dataset_name = "liver"
 test_size = 0.3
 phi1 = 2.1
 phi2 = 2.1

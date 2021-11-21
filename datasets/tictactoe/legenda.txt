@@ -1,0 +1,7 @@
+class:
+positive = 1
+negative = 2
+
+x = 1
+o = 0
+b = 0.5

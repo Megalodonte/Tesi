@@ -1,5 +1,0 @@
-1-Octanol = 1
-1-Propanol = 2
-2-Butanol = 3
-2-propanol = 4
-1-isobutanol = 5
